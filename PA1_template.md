@@ -36,7 +36,8 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 ## Loading and preprocessing the data
 ___
 unzip and load data into the `data frame`.
-```{r loadingData, echo=TRUE}
+
+```r
 unzip("activity.zip")
 activityData <- read.csv(file = "activity.csv", header = T, sep = ",")
 ```
@@ -44,7 +45,8 @@ activityData <- read.csv(file = "activity.csv", header = T, sep = ",")
 ## What is mean total number of steps taken per day?
 ___
 Sum steps by day, create Histogram, and calculate mean and median.
-```{r, echo=TRUE}
+
+```r
 # removing NA or missing values from activityData
 newActivityData <- na.omit(object = activityData)
 
@@ -54,12 +56,16 @@ names(totalSteps) <- c("date", "steps")
 hist(totalSteps$steps, main = "Total number of steps taken per day"
            , xlab = "number of steps per day"
            , breaks = seq(0,25000, by=5000))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
+```r
 actSteps.mean <- mean(totalSteps$steps)
 actSteps.median <- median(totalSteps$steps) 
 ```
 
-The `mean` is `r actSteps.mean` and the `median` is `r actSteps.median`.
+The `mean` is 1.0766189\times 10^{4} and the `median` is 10765.
 
 ## What is the average daily activity pattern?
 ___
@@ -69,13 +75,19 @@ ___
 * Find interval with most average steps.
 
 
-```{r, echo=TRUE}
+
+```r
 averageTotalSteps <- with(data = newActivityData, expr = aggregate(steps, by = list(interval)
                                                                          , FUN = mean))
       names(averageTotalSteps) <- c("interval", "steps.mean")
 plot(averageTotalSteps$interval, averageTotalSteps$steps.mean, type = "l"
            , lwd = 2, xlab="Interval", ylab="Average number of steps"
            , main="Average number of steps per intervals")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 max_interval <- averageTotalSteps[which.max(averageTotalSteps$steps.mean),1]
 ```
 
@@ -83,15 +95,17 @@ max_interval <- averageTotalSteps[which.max(averageTotalSteps$steps.mean),1]
 ___
 
 Calculate The total number of missing values:
-```{r, echo=TRUE}
+
+```r
 missingSteps <- sum(is.na(activityData$steps))
 ```
 
-The total number of missing values: `r missingSteps`.
+The total number of missing values: 2304.
 
 Missing data needed to be imputed. Only a simple imputation approach was required for this assignment. Missing values were imputed by inserting the average for each interval.
 
-```{r, echo=TRUE}
+
+```r
 incomplete <- sum(!complete.cases(activityData))
       imputed_data <- 
             transform(activityData
@@ -103,12 +117,14 @@ incomplete <- sum(!complete.cases(activityData))
 
 NAs are assumed to be zeros to fit the rising trend of the data.
 
-```{r}
+
+```r
 imputed_data[as.character(imputed_data$date) == "2012-10-01", 1] <- 0
 ```
 
 Recount total steps by day and create Histogram.
-```{r}
+
+```r
 totalSteps.imputed <- aggregate(steps ~ date, imputed_data, sum)
 hist(totalSteps.imputed$steps, main = paste("Total Steps Per Day"), col="blue"
            , xlab="Number of Steps")
@@ -116,39 +132,44 @@ hist(totalSteps.imputed$steps, main = paste("Total Steps Per Day"), col="blue"
 hist(totalSteps$steps, main = paste("Total Steps Per Day"), col="red", xlab="Number of Steps"
            , add=T)
       legend("topright", c("Imputed", "Non-imputed"), col=c("blue", "red"), lwd=10)
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 Calculate new mean and median for imputed data.
 
-```{r}
+
+```r
 actSteps.imputed.mean <- mean(totalSteps.imputed$steps)
 actSteps.imputed.median <- median(totalSteps.imputed$steps)
 ```
 
 Calculate difference between imputed and non-imputed data.
-```{r}
+
+```r
 mean_diff <- mean(totalSteps.imputed$steps) - mean(totalSteps$steps)
 median_diff <- median(totalSteps.imputed$steps) - median(totalSteps$steps)
 ```
 
 Calculate total difference.
-```{r}
+
+```r
 total_diff <- sum(totalSteps.imputed$steps) - sum(totalSteps$steps)
 ```
 
-- The imputed data mean is `r actSteps.imputed.mean`
-- The imputed data median is `r actSteps.imputed.median`
-- The difference between the non-imputed mean and imputed mean is `r mean_diff`
-- The difference between the non-imputed mean and imputed mean is `r median_diff`
-- The difference between total number of steps between imputed and non-imputed data is `r total_diff`. Thus, there were r total_diff more steps in the imputed data.  
+- The imputed data mean is 1.0589694\times 10^{4}
+- The imputed data median is 1.0766189\times 10^{4}
+- The difference between the non-imputed mean and imputed mean is -176.4948964
+- The difference between the non-imputed mean and imputed mean is 1.1886792
+- The difference between total number of steps between imputed and non-imputed data is 7.5363321\times 10^{4}. Thus, there were r total_diff more steps in the imputed data.  
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ___
 
 Create a new factor variable in the dataset with two levels - "weekday" and "weekend", and compare the two. There is a higher peak earlier on weekdays, and more overall activity on weekends.
 
-```{r}
+
+```r
 weekdays <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 
 imputed_data$dow = as.factor(ifelse(is.element(weekdays(as.Date(imputed_data$date)),weekdays)
@@ -162,3 +183,5 @@ xyplot(totalSteps.imputed$steps ~ totalSteps.imputed$interval|totalSteps.imputed
              , main="Average Steps per Day by Interval",xlab="Interval", ylab="Steps",layout=c(1,2)
              , type="l")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
