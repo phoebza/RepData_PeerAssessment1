@@ -1,8 +1,9 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
+author: "Phoebe Mailwane"
 output: 
   html_document:
-    keep_md: true
+      keep_md: true
 ---
 
 This assignment makes use of data from a personal activity monitoring device. This device collects 
@@ -18,7 +19,8 @@ The purpose of this project was to practice:
 
 
 ## Data
-___
+
+
 The data for this assignment was downloaded from the course web site:
 
 * **Dataset**: [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) [52K]  
@@ -34,7 +36,8 @@ The variables included in this dataset are:
 The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
 
 ## Loading and preprocessing the data
-___
+
+
 unzip and load data into the `data frame`.
 
 ```r
@@ -43,7 +46,8 @@ activityData <- read.csv(file = "activity.csv", header = T, sep = ",")
 ```
 
 ## What is mean total number of steps taken per day?
-___
+
+
 Sum steps by day, create Histogram, and calculate mean and median.
 
 ```r
@@ -68,7 +72,7 @@ actSteps.median <- median(totalSteps$steps)
 The `mean` is 1.0766189\times 10^{4} and the `median` is 10765.
 
 ## What is the average daily activity pattern?
-___
+
 
 * Calculate average steps for each interval for all days.
 * Plot the Average Number Steps per Day by Interval.
@@ -92,7 +96,7 @@ max_interval <- averageTotalSteps[which.max(averageTotalSteps$steps.mean),1]
 ```
 
 ## Imputing missing values
-___
+
 
 Calculate The total number of missing values:
 
@@ -164,7 +168,7 @@ total_diff <- sum(totalSteps.imputed$steps) - sum(totalSteps$steps)
 - The difference between total number of steps between imputed and non-imputed data is 7.5363321\times 10^{4}. Thus, there were r total_diff more steps in the imputed data.  
 
 ## Are there differences in activity patterns between weekdays and weekends?
-___
+
 
 Create a new factor variable in the dataset with two levels - "weekday" and "weekend", and compare the two. There is a higher peak earlier on weekdays, and more overall activity on weekends.
 
